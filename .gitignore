@@ -1,5 +1,4 @@
 dist/MxTestProject/deployment/
-dist/tmp/
 node_modules/
 *.log
 .env
