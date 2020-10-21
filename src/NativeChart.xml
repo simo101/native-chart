@@ -14,6 +14,16 @@
                 <description/>
                 <properties>
                     <propertyGroup caption="General">
+                        <propertyGroup caption="Chart">
+                            <property key="chartType" type="enumeration" defaultValue="bar">
+                                <caption>Chart Type</caption>
+                                <description>Chart type to use to render this series.</description>
+                                <enumerationValues>
+                                    <enumerationValue key="bar">Bar</enumerationValue>
+                                    <enumerationValue key="line">Line</enumerationValue>
+                                </enumerationValues>
+                            </property>
+                        </propertyGroup>
                         <propertyGroup caption="Data">
                             <property key="chartData" type="datasource" isList="true" required="false">
                                 <caption>Data source</caption>
@@ -38,6 +48,10 @@
                                     <attributeType name="Decimal"/>
                                     <attributeType name="Integer"/>
                                 </attributeTypes>
+                            </property>
+                            <property key="yPrecision" type="integer" defaultValue="0">
+                                <caption>Y Axis Precision</caption>
+                                <description>Number of decimal points to use in y-axis.</description>
                             </property>
                         </propertyGroup>
                     </propertyGroup>

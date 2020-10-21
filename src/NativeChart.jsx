@@ -1,6 +1,6 @@
 import { Component, createElement } from "react";
 import { StyleSheet, View } from "react-native";
-import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme } from "victory-native";
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryLine, VictoryTheme } from "victory-native";
 
 export class NativeChart extends Component {
     render() {
@@ -12,49 +12,44 @@ export class NativeChart extends Component {
                 backgroundColor: "#f5fcff"
             }
         });
-
         return (
             <View style={styles.container}>
-                <VictoryChart
-                    // adding the material theme provided with Victory
-                    theme={VictoryTheme.material}
-                    domainPadding={20}
-                >
-                    <VictoryAxis
-                    //tickValues={[1, 2, 3, 4]}
-                    //tickFormat={["Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"]}
-                    />
-                    <VictoryAxis
-                    //dependentAxis
-                    //tickFormat={x => `$${x / 1000}k`}
-                    />
-                    {this._renderDataSeries(this.props.dataSeries)}
-                </VictoryChart>
+                {this._dataReady(this.props.dataSeries) && (
+                    <VictoryChart theme={VictoryTheme.material} domainPadding={20}>
+                        {this._renderAllDataSeries(this.props.dataSeries)}
+                    </VictoryChart>
+                )}
             </View>
         );
     }
 
-    _renderDataSeries(dataSeries) {
+    _dataReady(dataSeries) {
+        const nonReadySeries = dataSeries.filter(series => series.chartData.status !== "available");
+        return nonReadySeries.length === 0;
+    }
+
+    _renderAllDataSeries(dataSeries) {
         const charts = [];
         if (dataSeries) {
-            console.info(JSON.stringify(dataSeries));
-            const formattedDataArray = dataSeries.map(series => {
-                console.info("data series: " + JSON.stringify(series));
-                if (series.chartData.status === "available") {
-                    return series.chartData.items.map(dataRow => ({
-                        x: series.x(dataRow).value,
-                        y: series.y(dataRow).value
-                    }));
-                } else {
-                    return [];
+            dataSeries.forEach((series, i) => {
+                const chart = this._renderOneDataSeries(series, i);
+                if (chart) {
+                    charts.push(chart);
                 }
             });
-            console.info("Formatted: " + JSON.stringify(formattedDataArray));
-
-            for (let i = 0; i < formattedDataArray.length; i++) {
-                charts.push(<VictoryBar key={i} data={formattedDataArray[i]} x="x" y="y" />);
-            }
         }
         return charts;
+    }
+
+    _renderOneDataSeries(series, i) {
+        const data = series.chartData.items.map(dataRow => ({
+            x: series.x(dataRow).value,
+            y: parseFloat(series.y(dataRow).value.toFixed(series.yPrecision))
+        }));
+        if (series.chartType === "bar") {
+            return <VictoryBar key={i} data={data} x="x" y="y" />;
+        } else if (series.chartType === "line") {
+            return <VictoryLine key={i} data={data} x="x" y="y" />;
+        } else return null;
     }
 }
