@@ -21,7 +21,12 @@
                                 <enumerationValues>
                                     <enumerationValue key="bar">Bar</enumerationValue>
                                     <enumerationValue key="line">Line</enumerationValue>
+                                    <enumerationValue key="pie">Pie</enumerationValue>
                                 </enumerationValues>
+                            </property>
+                            <property key="showLabels" type="boolean" defaultValue="false">
+                                <caption>Show Labels</caption>
+                                <description> Display labels on data points</description>
                             </property>
                         </propertyGroup>
                         <propertyGroup caption="Data">
