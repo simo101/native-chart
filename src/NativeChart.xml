@@ -63,11 +63,15 @@
             </property>
             <property key="labelPrefix" type="string" required="false" defaultValue=''>
                 <caption>Add Prefix</caption>
-                <description>Add a prefix to dependent axis label</description>
+                <description>Add a prefix to each y-axis label</description>
             </property>
             <property key="labelSuffix" type="string" required="false" defaultValue=''>
                 <caption>Add Suffix</caption>
-                <description>Add a suffix to dependent axis label</description>
+                <description>Add a suffix to each y-axis label</description>
+            </property>
+            <property key="formatXAxisDate" type="boolean" required="true" defaultValue='false'>
+                <caption>X-axis Date Formatting</caption>
+                <description>This field must be set to true if adding a prefix/suffix and the x-axis uses a date attribute</description>
             </property>
         </propertyGroup>
     </properties>

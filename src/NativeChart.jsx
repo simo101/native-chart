@@ -33,35 +33,28 @@ export class NativeChart extends Component {
             renderCustomAxes = true
         }
         if (renderCustomAxes) {
-        return (<Fragment>
-                    {this._renderCustomizedAxes()}
-                </Fragment>
-            )
+            return (<Fragment>
+                        {this._renderCustomizedAxes()}
+                    </Fragment>
+                )
         }
         else {
-        return (<VictoryChart theme={VictoryTheme.material} domainPadding={20} children={this._renderAllDataSeries(this.props.dataSeries)}>                    
-                </VictoryChart>
-            )
+            return (<VictoryChart theme={VictoryTheme.material} domainPadding={20} children={this._renderAllDataSeries(this.props.dataSeries)}>                    
+                    </VictoryChart>
+                )
         }
     }
 
     _renderCustomizedAxes() {
         const prefix = this.props.labelPrefix !== '' ? this.props.labelPrefix : ''
         const suffix = this.props.labelSuffix !== '' ? this.props.labelSuffix : ''
+        const scaleValue = this.props.formatXAxisDate ? {x:"time"} : null
         const tickFormatFn = (tickLabel) => {
             return `${prefix}${tickLabel}${suffix}`
         }
-        const checkForDates = (tickLabel) => {
-            const date = new Date(tickLabel)
-            console.info(tickLabel)
-            console.info(typeof tickLabel)
-            console.info(date)
-            console.info(date.toLocaleString('default', { month: 'long' }))
-            return date.toLocaleString('default', { month: 'long' })
-        }
-        return (<VictoryChart theme={VictoryTheme.material} domainPadding={20}>
+        return (<VictoryChart scale={scaleValue} theme={VictoryTheme.material} domainPadding={20}>
                     <VictoryAxis tickFormat={tickFormatFn} dependentAxis={true} />
-                    <VictoryAxis tickFormat={checkForDates} independentAxis={true} />
+                    <VictoryAxis  independentAxis={true} />
                     {this._renderAllDataSeries(this.props.dataSeries)}
                 </VictoryChart>)
 
