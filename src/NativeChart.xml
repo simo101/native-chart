@@ -21,12 +21,11 @@
                                 <enumerationValues>
                                     <enumerationValue key="bar">Bar</enumerationValue>
                                     <enumerationValue key="line">Line</enumerationValue>
-                                    <enumerationValue key="pie">Pie</enumerationValue>
                                 </enumerationValues>
                             </property>
                             <property key="showLabels" type="boolean" defaultValue="false">
                                 <caption>Show Labels</caption>
-                                <description> Display labels on data points</description>
+                                <description>Display labels on data points</description>
                             </property>
                         </propertyGroup>
                         <propertyGroup caption="Data">
@@ -61,6 +60,14 @@
                         </propertyGroup>
                     </propertyGroup>
                 </properties>
+            </property>
+            <property key="labelPrefix" type="string" required="false" defaultValue=''>
+                <caption>Add Prefix</caption>
+                <description>Add a prefix to dependent axis label</description>
+            </property>
+            <property key="labelSuffix" type="string" required="false" defaultValue=''>
+                <caption>Add Suffix</caption>
+                <description>Add a suffix to dependent axis label</description>
             </property>
         </propertyGroup>
     </properties>

@@ -1,6 +1,6 @@
-import { Component, createElement } from "react";
+import { Component, createElement, Fragment } from "react";
 import { StyleSheet, View } from "react-native";
-import { VictoryAxis, VictoryBar, VictoryChart, VictoryLine, VictoryPie, VictoryTheme } from "victory-native";
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryLine, VictoryTheme } from "victory-native";
 
 export class NativeChart extends Component {
     render() {
@@ -14,11 +14,7 @@ export class NativeChart extends Component {
         });
         return (
             <View style={styles.container}>
-                {this._dataReady(this.props.dataSeries) && (
-                    <VictoryChart theme={VictoryTheme.material} domainPadding={20}>
-                        {this._renderAllDataSeries(this.props.dataSeries)}
-                    </VictoryChart>
-                )}
+                {this._dataReady(this.props.dataSeries) && (this._renderVictoryChart())}
             </View>
         );
     }
@@ -26,6 +22,49 @@ export class NativeChart extends Component {
     _dataReady(dataSeries) {
         const nonReadySeries = dataSeries.filter(series => series.chartData.status !== "available");
         return nonReadySeries.length === 0;
+    }
+
+    _renderVictoryChart() {
+        let renderCustomAxes = false;
+        if (this.props.labelPrefix !== '') {
+            renderCustomAxes = true
+        }
+        if (this.props.labelSuffix !== '') {
+            renderCustomAxes = true
+        }
+        if (renderCustomAxes) {
+        return (<Fragment>
+                    {this._renderCustomizedAxes()}
+                </Fragment>
+            )
+        }
+        else {
+        return (<VictoryChart theme={VictoryTheme.material} domainPadding={20} children={this._renderAllDataSeries(this.props.dataSeries)}>                    
+                </VictoryChart>
+            )
+        }
+    }
+
+    _renderCustomizedAxes() {
+        const prefix = this.props.labelPrefix !== '' ? this.props.labelPrefix : ''
+        const suffix = this.props.labelSuffix !== '' ? this.props.labelSuffix : ''
+        const tickFormatFn = (tickLabel) => {
+            return `${prefix}${tickLabel}${suffix}`
+        }
+        const checkForDates = (tickLabel) => {
+            const date = new Date(tickLabel)
+            console.info(tickLabel)
+            console.info(typeof tickLabel)
+            console.info(date)
+            console.info(date.toLocaleString('default', { month: 'long' }))
+            return date.toLocaleString('default', { month: 'long' })
+        }
+        return (<VictoryChart theme={VictoryTheme.material} domainPadding={20}>
+                    <VictoryAxis tickFormat={tickFormatFn} dependentAxis={true} />
+                    <VictoryAxis tickFormat={checkForDates} independentAxis={true} />
+                    {this._renderAllDataSeries(this.props.dataSeries)}
+                </VictoryChart>)
+
     }
 
     _renderAllDataSeries(dataSeries) {
@@ -43,27 +82,23 @@ export class NativeChart extends Component {
 
     _renderOneDataSeries(series, i) {
         const data = series.chartData.items.map(dataRow => 
-        ({
+        ({  
             x: this._checkXAxisDataType(series.x(dataRow).value),
             y: parseFloat(series.y(dataRow).value.toFixed(series.yPrecision))
         }));
         if (series.chartType === "bar") {
-            const barChart = series.showLabels ? 
-            <VictoryBar key={i} data={data} labels={this._generateLabelList(data)}  x="x" y="y"/> : <VictoryBar key={i} data={data} x="x" y="y" />
-            return barChart
+            const barChartLabels = series.showLabels ? this._generateLabelList(data) : null;
+            return <VictoryBar key={i} data={data} labels={barChartLabels}  x="x" y="y"/>
         } else if (series.chartType === "line") {
-            const lineChart = series.showLabels ? 
-            <VictoryLine key={i} data={data} labels={this._generateLabelList(data)} x="x" y="y" /> : <VictoryLine key={i} data={data} x="x" y="y" />
-            return lineChart
-        } else if (series.chartType === "pie") {
-            return <VictoryPie key={i} data={data} />
-        } 
+            const lineChartLabels = series.showLabels ? this._generateLabelList(data) : null;
+            return <VictoryLine key={i} data={data} labels={lineChartLabels} x="x" y="y" />         
+        }
         else return null;
     }
 
     _checkXAxisDataType(itemXValue) {
         if (typeof itemXValue === 'object') {
-            const formattedDate = (itemXValue.getMonth() + 1) + '/' + itemXValue.getDate() + '/' + itemXValue.getFullYear();
+            formattedDate = new Date(itemXValue)
             return formattedDate
         } else return itemXValue
     }
